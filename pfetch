@@ -113,6 +113,19 @@ get_title() {
     hostname=${HOSTNAME:-${hostname:-$(hostname)}}
 
     log "[3${PF_COL3:-1}m${user}${c7}@[3${PF_COL3:-1}m${hostname}" " " >&6
+
+}
+
+get_cpu() {
+    cpu="$(cat /proc/cpuinfo | sed 's/.*: //g' | awk '/CPU/ { print $0 }' | head -n1)"
+    case $cpu in
+	(Intel*)
+	    log "cpu    ${c6}${cpu}${c4}" " " >&6
+	;;
+	(AMD*)
+	    log "cpu    ${c1}${cpu}${c4}" " " >&6
+	;;
+	esac
 }
 
 get_os() {
@@ -1581,7 +1594,7 @@ main() {
         # Disable globbing and set the positional parameters to the
         # contents of 'PF_INFO'.
         set -f
-        set +f -- ${PF_INFO-ascii title os host kernel uptime pkgs memory}
+        set +f -- ${PF_INFO-ascii title cpu os host kernel wm uptime pkgs memory}
 
         # Iterate over the info functions to determine the lengths of the
         # "info names" for output alignment. The option names and subtitles
